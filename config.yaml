@@ -20,7 +20,7 @@ profile:
   store-selected: true
   store-fake-ip: true
 external-controller: 0.0.0.0:9090
-secret: "wen624978"
+secret: ""
 external-ui: ui
 global-client-fingerprint: chrome
 geodata-mode: true
@@ -174,7 +174,7 @@ dns:
 proxy-providers:
   自建:
     type: http
-    url: "链接地址" 
+    url: "地址链接" 
     interval: 86400
     health-check:
       enable: true
@@ -191,7 +191,6 @@ proxy-groups:
     type: select
     proxies:
       - DIRECT
-      - REJECT
     use:
       - 自建
       - 哈基米  
@@ -201,7 +200,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Game.png?raw=true
@@ -210,7 +208,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/YouTube.png?raw=true
@@ -219,7 +216,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Twitter.png?raw=true
@@ -228,7 +224,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Facebook.png?raw=true
@@ -237,7 +232,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/google.png?raw=true
@@ -246,7 +240,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/raw/refs/heads/main/chatgpt.svg
@@ -255,16 +248,22 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/GitHub.png?raw=true
+  - name: Bing
+    type: select
+    proxies:
+      - 节点选择
+      - DIRECT
+    use:
+      - 自建  
+    icon: https://github.com/ligonfei/Ligonfei/raw/refs/heads/main/bing.svg
   - name: Microsoft
     type: select
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/raw/refs/heads/main/microsoft.svg
@@ -273,7 +272,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/raw/refs/heads/main/%E4%BA%A4%E6%98%93%E6%89%80.svg
@@ -282,7 +280,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/tiktok.png?raw=true
@@ -291,7 +288,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Telegram.png?raw=true
@@ -300,7 +296,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/netflix.png?raw=true
@@ -309,7 +304,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Disney.png?raw=true
@@ -318,7 +312,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Speedtest.png?raw=true
@@ -327,7 +320,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/appleclassic.png?raw=true
@@ -336,7 +328,6 @@ proxy-groups:
     proxies:
       - DIRECT
       - 节点选择
-      - REJECT
     icon: https://github.com/ligonfei/Ligonfei/blob/main/China.png?raw=true
   - name: 广告拦截
     type: select
@@ -349,7 +340,6 @@ proxy-groups:
     proxies:
       - 节点选择
       - DIRECT
-      - REJECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/raw/refs/heads/main/fish.svg
@@ -416,6 +406,7 @@ rule-providers:
   telegram_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/telegram.mrs"}
   netflix_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/netflix.mrs"}
   disney_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/disney.mrs"}
+  bing_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bing.mrs"}
   microsoft_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/microsoft.mrs"}
   binance_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/binance.mrs"}
   OKX_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/okx.mrs"}
