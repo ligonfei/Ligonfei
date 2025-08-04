@@ -20,7 +20,7 @@ profile:
   store-selected: true
   store-fake-ip: true
 external-controller: 0.0.0.0:9090
-secret: ""
+secret: "wen624978"
 external-ui: ui
 external-ui-url: "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip" 
 global-client-fingerprint: chrome
@@ -179,12 +179,12 @@ proxy-providers:
     type: http
     url: "" 
     interval: 86400
+    override:
+      additional-prefix: "自建:"
     health-check:
       enable: true
       url: "https://cp.cloudflare.com/generate_204"
       interval: 600
-
-
 
 
 
@@ -196,12 +196,17 @@ proxy-groups:
       - DIRECT
     use:
       - 自建
-      - 哈基米  
     icon: https://github.com/ligonfei/Ligonfei/raw/refs/heads/main/%E8%8A%82%E7%82%B9%E9%80%89%E6%8B%A9.svg
+  - name: 机场
+    type: select
+    use:
+      - 哈基米
+    icon: https://github.com/ligonfei/Ligonfei/blob/main/Airport.png?raw=true  
   - name: 游戏平台
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -210,14 +215,16 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
     icon: https://github.com/ligonfei/Ligonfei/blob/main/YouTube.png?raw=true
-  - name: Spoyify
+  - name: Spotify
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -226,6 +233,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -234,6 +242,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -242,6 +251,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -250,6 +260,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -258,6 +269,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -266,6 +278,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -274,6 +287,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -282,6 +296,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -290,6 +305,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -298,6 +314,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -306,6 +323,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -314,6 +332,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -322,6 +341,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -330,6 +350,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
@@ -339,6 +360,7 @@ proxy-groups:
     proxies:
       - DIRECT
       - 节点选择
+      - 机场
     icon: https://github.com/ligonfei/Ligonfei/blob/main/China.png?raw=true
   - name: 广告拦截
     type: select
@@ -350,6 +372,7 @@ proxy-groups:
     type: select
     proxies:
       - 节点选择
+      - 机场
       - DIRECT
     use:
       - 自建  
