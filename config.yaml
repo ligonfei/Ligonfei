@@ -158,8 +158,8 @@ dns:
   nameserver-policy:
     '+.local': 'system'
     'rule-set:cn_domain,microsoft_domain,apple_domain':
-      - https://dns.alidns.com/dns-query#国内平台&h3=true
-      - https://doh.pub/dns-query#国内平台&h3=false
+      - https://dns.alidns.com/dns-query#国内平台
+      - https://doh.pub/dns-query#国内平台
     'rule-set:geolocation-!cn_domain':
     - https://dns.google/dns-query#Google&h3=true
     - https://cloudflare-dns.com/dns-query#节点选择&h3=true
@@ -167,8 +167,8 @@ dns:
     - https://dns.google/dns-query#Google&h3=true
     - https://cloudflare-dns.com/dns-query#节点选择&h3=true
   proxy-server-nameserver:
-    - https://dns.alidns.com/dns-query#国内平台&h3=true
-    - https://doh.pub/dns-query#国内平台&h3=false
+    - https://dns.alidns.com/dns-query#国内平台
+    - https://doh.pub/dns-query#国内平台
 
 
 proxy-providers:
@@ -187,7 +187,6 @@ proxy-providers:
 
 
 
-
 proxy-groups:
   - name: 节点选择
     type: select
@@ -199,7 +198,7 @@ proxy-groups:
   - name: 机场
     type: select
     use:
-      - 机场集合
+      - 机场
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Airport.png?raw=true  
   - name: 游戏平台
     type: select
