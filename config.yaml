@@ -157,10 +157,10 @@ dns:
     - '+.market.xiaomi.com'
   nameserver-policy:
     '+.local': 'system'
-    'rule-set:cn_domain,microsoft_domain,apple_domain':
+    'rule-set:cn_domain':
       - https://dns.alidns.com/dns-query#DIRECT
       - https://doh.pub/dns-query#DIRECT
-    'rule-set:geolocation-!cn_domain':
+    'rule-set:gfw_domain':
       - https://dns.google/dns-query#Google&h3=true
       - https://cloudflare-dns.com/dns-query#节点选择&h3=true
     "+.ligon.top":
@@ -175,7 +175,7 @@ dns:
 proxy-providers:
   自建:
     type: http
-   
+
     interval: 86400
     override:
       additional-prefix: "自建:"
@@ -183,7 +183,6 @@ proxy-providers:
       enable: true
       url: "http://www.apple.com/library/test/success.html"
       interval: 600
-
 
 
 
@@ -439,8 +438,6 @@ rule-providers:
   speedtest_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-speedtest.mrs"}
   tiktok_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/tiktok.mrs"}
   gfw_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/gfw.mrs"}
-  geolocation-cn_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/geolocation-cn.mrs"}
-  geolocation-!cn_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/geolocation-!cn.mrs"}
   cn_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/cn.mrs"}
   ads1_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ads-all.mrs"}
   ads2_domain: { <<: *domain, url: "https://raw.githubusercontent.com/privacy-protection-tools/anti-ad.github.io/master/docs/mihomo.mrs"}
