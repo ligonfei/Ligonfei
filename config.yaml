@@ -165,7 +165,6 @@ dns:
       - https://cloudflare-dns.com/dns-query#节点选择&h3=true
     "+.ligon.top":
       - 8.8.8.8
-
   nameserver:
     - https://dns.google/dns-query#Google&h3=true
     - https://cloudflare-dns.com/dns-query#节点选择&h3=true
@@ -176,6 +175,7 @@ dns:
 proxy-providers:
   自建:
     type: http
+   
     interval: 86400
     override:
       additional-prefix: "自建:"
@@ -183,6 +183,8 @@ proxy-providers:
       enable: true
       url: "http://www.apple.com/library/test/success.html"
       interval: 600
+
+
 
 
 ping: &ping
@@ -343,44 +345,66 @@ proxy-groups:
 
 
 rules:
-  - RULE-SET,private_ip,国内平台 
-  - RULE-SET,twitter_ip,推特
-  - RULE-SET,facebook_ip,Facebook
-  - RULE-SET,telegram_ip,Telegram
-  - RULE-SET,ai_ip,AI
-  - RULE-SET,netflix_ip,NETFLIX
-  - RULE-SET,google_ip,Google 
-  - RULE-SET,cn_ip,国内平台 
   - RULE-SET,ads1_domain,广告拦截 
   - RULE-SET,ads2_domain,广告拦截 
   - RULE-SET,ads3_domain,广告拦截
+
   - RULE-SET,private_domain,国内平台 
+  - RULE-SET,private_ip,国内平台
+
   - RULE-SET,steam_domain,游戏平台
   - RULE-SET,xbox_domain,游戏平台
   - RULE-SET,rockstar_domain,游戏平台
   - RULE-SET,ubisoft_domain,游戏平台
   - RULE-SET,epic_domain,游戏平台
   - RULE-SET,ea_domain,游戏平台
+  - RULE-SET,gog_domain,游戏平台
+
   - RULE-SET,binance_domain,交易所
   - RULE-SET,OKX_domain,交易所
+
   - RULE-SET,youtube_domain,YouTube
+
   - RULE-SET,spotify_domain,Spotify
+
   - RULE-SET,x_domain,推特
   - RULE-SET,twitter_domain,推特
+  - RULE-SET,twitter_ip,推特
+
   - RULE-SET,facebook_domain,Facebook
+  - RULE-SET,facebook_ip,Facebook
+
   - RULE-SET,telegram_domain,Telegram
+  - RULE-SET,telegram_ip,Telegram
+
   - RULE-SET,ai_domain,AI
+  - RULE-SET,ai_ip,AI
+
   - RULE-SET,speedtest_domain,Speedtest
+
   - RULE-SET,tiktok_domain,TikTok
+
   - RULE-SET,disney_domain,Disney+
+
   - RULE-SET,netflix_domain,NETFLIX
+  - RULE-SET,netflix_ip,NETFLIX
+
   - RULE-SET,apple_domain,Apple
+
   - RULE-SET,github_domain,GitHub
+
   - RULE-SET,bing_domain,Bing
+
   - RULE-SET,microsoft_domain,Microsoft
+
   - RULE-SET,google_domain,Google
+  - RULE-SET,google_ip,Google
+
   - RULE-SET,gfw_domain, 节点选择
+
   - RULE-SET,cn_domain,国内平台
+  - RULE-SET,cn_ip,国内平台
+
   - MATCH,漏网之鱼
 
 rule-anchor:
@@ -394,6 +418,7 @@ rule-providers:
   ea_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ea.mrs"}
   epic_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/epicgames.mrs"}
   steam_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/steam.mrs"}
+  gog_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/gog.mrs"}
   private_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.mrs"}
   ai_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs"}
   youtube_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.mrs"}
