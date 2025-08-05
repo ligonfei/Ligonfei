@@ -158,11 +158,14 @@ dns:
   nameserver-policy:
     '+.local': 'system'
     'rule-set:cn_domain,microsoft_domain,apple_domain':
-      - https://dns.alidns.com/dns-query#国内平台
-      - https://doh.pub/dns-query#国内平台
+      - https://dns.alidns.com/dns-query#DIRECT
+      - https://doh.pub/dns-query#DIRECT
     'rule-set:geolocation-!cn_domain':
-    - https://dns.google/dns-query#Google&h3=true
-    - https://cloudflare-dns.com/dns-query#节点选择&h3=true
+      - https://dns.google/dns-query#Google&h3=true
+      - https://cloudflare-dns.com/dns-query#节点选择&h3=true
+    "+.ligon.top":
+      - 8.8.8.8
+
   nameserver:
     - https://dns.google/dns-query#Google&h3=true
     - https://cloudflare-dns.com/dns-query#节点选择&h3=true
@@ -170,189 +173,143 @@ dns:
     - https://dns.alidns.com/dns-query#国内平台
     - https://doh.pub/dns-query#国内平台
 
-
 proxy-providers:
   自建:
     type: http
-    url: "" 
     interval: 86400
     override:
       additional-prefix: "自建:"
     health-check:
       enable: true
-      url: "https://cp.cloudflare.com/generate_204"
+      url: "http://www.apple.com/library/test/success.html"
       interval: 600
 
 
-
+ping: &ping
+    type: select
+    proxies:
+      - 节点选择
+      - DIRECT
+      - 机场 
+    use:
+      - 自建
+    url: "http://www.apple.com/library/test/success.html"
+    interval: 300
+    lazy: true
+    timeout: 5000
+    max-failed-times: 5
 
 
 proxy-groups:
+
+
   - name: 节点选择
     type: select
     proxies:
       - DIRECT
+      - 机场 
     use:
       - 自建
+    url: "http://www.apple.com/library/test/success.html"
+    interval: 300
+    lazy: true
+    timeout: 5000
+    max-failed-times: 5
     icon: https://github.com/ligonfei/Ligonfei/raw/refs/heads/main/%E8%8A%82%E7%82%B9%E9%80%89%E6%8B%A9.svg
+
+
   - name: 机场
     type: select
     use:
       - 机场
-    icon: https://github.com/ligonfei/Ligonfei/blob/main/Airport.png?raw=true  
+    icon: https://github.com/ligonfei/Ligonfei/blob/main/Airport.png?raw=true
+
+
   - name: 游戏平台
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Game.png?raw=true
+
+
   - name: YouTube
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/blob/main/YouTube.png?raw=true
+
+
   - name: Spotify
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping 
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Spotify.png?raw=true
+
+
   - name: 推特
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping 
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Twitter.png?raw=true
+
+
   - name: Facebook
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Facebook.png?raw=true
+
+
   - name: Google
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/blob/main/google.png?raw=true
+
+
   - name: AI
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/raw/refs/heads/main/chatgpt.svg
+
+
   - name: GitHub
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/blob/main/GitHub.png?raw=true
+
+
   - name: Bing
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/raw/refs/heads/main/bing.svg
+
+
   - name: Microsoft
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/raw/refs/heads/main/microsoft.svg
+
+
   - name: 交易所
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/raw/refs/heads/main/%E4%BA%A4%E6%98%93%E6%89%80.svg
+
+
   - name: TikTok
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/blob/main/tiktok.png?raw=true
+
+
   - name: Telegram
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Telegram.png?raw=true
+
+
   - name: NETFLIX
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/blob/main/netflix.png?raw=true
+
+
   - name: Disney+
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Disney.png?raw=true
+
+
   - name: Speedtest
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Speedtest.png?raw=true
+
+
   - name: Apple
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/blob/main/appleclassic.png?raw=true
+
+
   - name: 国内平台
     type: select
     proxies:
@@ -360,35 +317,43 @@ proxy-groups:
       - 节点选择
       - 机场
     icon: https://github.com/ligonfei/Ligonfei/blob/main/China.png?raw=true
+    url: "http://www.apple.com/library/test/success.html"
+    interval: 300
+    lazy: true
+    timeout: 5000
+    max-failed-times: 5
+
+
   - name: 广告拦截
     type: select
     proxies:
       - DIRECT
       - REJECT
     icon: https://github.com/ligonfei/Ligonfei/blob/main/adguard.png?raw=true
+    url: "http://www.apple.com/library/test/success.html"
+    interval: 300
+    lazy: true
+    timeout: 5000
+    max-failed-times: 5
+
+
   - name: 漏网之鱼
-    type: select
-    proxies:
-      - 节点选择
-      - 机场
-      - DIRECT
-    use:
-      - 自建  
+    <<: *ping
     icon: https://github.com/ligonfei/Ligonfei/raw/refs/heads/main/fish.svg
 
 
 rules:
-  - RULE-SET,private_ip,国内平台 ,no-resolve
-  - RULE-SET,twitter_ip,推特,no-resolve
-  - RULE-SET,facebook_ip,Facebook,no-resolve
-  - RULE-SET,telegram_ip,Telegram,no-resolve
-  - RULE-SET,ai_ip,AI,no-resolve
-  - RULE-SET,netflix_ip,NETFLIX,no-resolve
-  - RULE-SET,google_ip,Google ,no-resolve
-  - RULE-SET,cn_ip,国内平台 ,no-resolve
+  - RULE-SET,private_ip,国内平台 
+  - RULE-SET,twitter_ip,推特
+  - RULE-SET,facebook_ip,Facebook
+  - RULE-SET,telegram_ip,Telegram
+  - RULE-SET,ai_ip,AI
+  - RULE-SET,netflix_ip,NETFLIX
+  - RULE-SET,google_ip,Google 
+  - RULE-SET,cn_ip,国内平台 
   - RULE-SET,ads1_domain,广告拦截 
   - RULE-SET,ads2_domain,广告拦截 
-  - RULE-SET,ads3_domain,广告拦截 
+  - RULE-SET,ads3_domain,广告拦截
   - RULE-SET,private_domain,国内平台 
   - RULE-SET,steam_domain,游戏平台
   - RULE-SET,xbox_domain,游戏平台
@@ -411,6 +376,7 @@ rules:
   - RULE-SET,netflix_domain,NETFLIX
   - RULE-SET,apple_domain,Apple
   - RULE-SET,github_domain,GitHub
+  - RULE-SET,bing_domain,Bing
   - RULE-SET,microsoft_domain,Microsoft
   - RULE-SET,google_domain,Google
   - RULE-SET,gfw_domain, 节点选择
@@ -462,3 +428,4 @@ rule-providers:
   telegram_ip: { <<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.mrs"}
   netflix_ip: { <<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/netflix.mrs"}
   facebook_ip: { <<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/facebook.mrs"}
+
