@@ -124,6 +124,7 @@ tun:
   udp-timeout: 300
 
 # DNS模块
+
 dns:
   enable: true
   cache-algorithm: arc
@@ -137,40 +138,42 @@ dns:
     - 111.11.1.1
     - 223.5.5.5
     - 119.29.29.29
+    - 8.8.8.8
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter-mode: blacklist
   fake-ip-filter:
     - '*.lan'
     - '*.local'
+    - "rule-set:private_domain,cn_domain"
     - '+.msftconnecttest.com'
     - '+.msftncsi.com'
     - 'captive.apple.com'
     - 'connectivitycheck.gstatic.com'
     - 'time.*.com'  
-    - 'ntp.aliyun.com'
-    - 'ntp.tencent.com'
     - 'speed.cloudflare.com'
     - '+.speedtest.net'
     - '+.microsoft.com'
     - '+.live.com'
     - '+.market.xiaomi.com'
   nameserver-policy:
+    '+.arpa': '10.0.0.1'
     '+.local': 'system'
     'rule-set:cn_domain':
-      - https://dns.alidns.com/dns-query#DIRECT
-      - https://doh.pub/dns-query#DIRECT
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
     'rule-set:geolocation-!cn_domain,gfw_domain':
-      - https://dns.google/dns-query#Google&h3=true
-      - https://cloudflare-dns.com/dns-query#节点选择&h3=true
+    - https://dns.google/dns-query#节点选择
+    - https://cloudflare-dns.com/dns-query#节点选择
     "+.ligon.top":
-      - 8.8.8.8
+    - 8.8.8.8
   nameserver:
-    - https://dns.google/dns-query#Google&h3=true
-    - https://cloudflare-dns.com/dns-query#节点选择&h3=true
+    - 111.11.1.1
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
   proxy-server-nameserver:
-    - https://dns.alidns.com/dns-query#国内平台
-    - https://doh.pub/dns-query#国内平台
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
 
 proxy-providers:
   自建:
@@ -181,8 +184,9 @@ proxy-providers:
       additional-prefix: "自建:"
     health-check:
       enable: true
-      url: "http://www.apple.com/library/test/success.html"
+      url: "https://www.gstatic.com/generate_204"
       interval: 600
+
 
 
 
@@ -194,7 +198,7 @@ ping: &ping
       - 机场 
     use:
       - 自建
-    url: "http://www.apple.com/library/test/success.html"
+    url: "https://www.gstatic.com/generate_204"
     interval: 300
     lazy: true
     timeout: 5000
@@ -211,7 +215,7 @@ proxy-groups:
       - 机场 
     use:
       - 自建
-    url: "http://www.apple.com/library/test/success.html"
+    url: "https://www.gstatic.com/generate_204"
     interval: 300
     lazy: true
     timeout: 5000
@@ -318,7 +322,7 @@ proxy-groups:
       - 节点选择
       - 机场
     icon: https://github.com/ligonfei/Ligonfei/blob/main/China.png?raw=true
-    url: "http://www.apple.com/library/test/success.html"
+    url: "https://www.gstatic.com/generate_204"
     interval: 300
     lazy: true
     timeout: 5000
@@ -331,7 +335,7 @@ proxy-groups:
       - DIRECT
       - REJECT
     icon: https://github.com/ligonfei/Ligonfei/blob/main/adguard.png?raw=true
-    url: "http://www.apple.com/library/test/success.html"
+    url: "https://www.gstatic.com/generate_204"
     interval: 300
     lazy: true
     timeout: 5000
