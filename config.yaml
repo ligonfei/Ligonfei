@@ -115,7 +115,6 @@ tun:
     - tcp://any:53
   route-exclude-address:
     - 10.0.0.0/8
-    - 172.16.0.0/12
     - 192.168.0.0/16
     - 224.0.0.0/4
     - 127.0.0.1/32
@@ -127,25 +126,15 @@ tun:
 
 dns:
   enable: true
-  cache-algorithm: arc
-  prefer-h3: false
-  use-hosts: false
-  use-system-hosts: true
-  respect-rules: false
+  ipv6: true
   listen: 0.0.0.0:1053
-  ipv6: false
-  default-nameserver:
-    - 111.11.1.1
-    - 223.5.5.5
-    - 119.29.29.29
-    - 8.8.8.8
   enhanced-mode: fake-ip
-  fake-ip-range: 198.18.0.1/16
-  fake-ip-filter-mode: blacklist
+  fake-ip-range: 172.20.0.1/16
   fake-ip-filter:
+    - "RULE-SET:cn_domain"
+    - "RULE-SET:private_domain"
     - '*.lan'
     - '*.local'
-    - "rule-set:private_domain,cn_domain"
     - '+.msftconnecttest.com'
     - '+.msftncsi.com'
     - 'captive.apple.com'
@@ -156,25 +145,19 @@ dns:
     - '+.microsoft.com'
     - '+.live.com'
     - '+.market.xiaomi.com'
-  nameserver-policy:
-    '+.arpa': '10.0.0.1'
-    '+.local': 'system'
-    'rule-set:cn_domain':
-    - https://doh.pub/dns-query
-    - https://dns.alidns.com/dns-query
-    'rule-set:geolocation-!cn_domain,gfw_domain':
-    - https://dns.google/dns-query#节点选择
-    - https://cloudflare-dns.com/dns-query#节点选择
-    "+.ligon.top":
-    - 8.8.8.8
-  nameserver:
-    - 111.11.1.1
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
+  direct-nameserver:
+    - https://doh.pub/dns-query#国内平台&h3=false
+    - https://dns.alidns.com/dns-query#国内平台&h3=true
   proxy-server-nameserver:
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
-
+    - https://doh.pub/dns-query#国内平台&h3=false
+    - https://dns.alidns.com/dns-query#国内平台&h3=true
+  nameserver-policy:
+    "RULE-SET:cn_domain,microsoft_domain,apple_domain":
+       - https://doh.pub/dns-query#国内平台&h3=false
+       - https://dns.alidns.com/dns-query#国内平台&h3=true
+  nameserver:
+    - https://dns.google/dns-query#节点选择&h3=true
+    - https://cloudflare-dns.com/dns-query#节点选择&h3=true
 proxy-providers:
   自建:
     type: http
@@ -186,7 +169,6 @@ proxy-providers:
       enable: true
       url: "https://www.gstatic.com/generate_204"
       interval: 600
-
 
 
 
@@ -224,7 +206,7 @@ proxy-groups:
 
 
   - name: 机场
-    type: select
+    type: url-test
     use:
       - 机场
     icon: https://github.com/ligonfei/Ligonfei/blob/main/Airport.png?raw=true
@@ -348,6 +330,8 @@ proxy-groups:
 
 
 rules:
+  - DST-PORT,853,节点选择
+
   - RULE-SET,ads1_domain,广告拦截 
   - RULE-SET,ads2_domain,广告拦截 
   - RULE-SET,ads3_domain,广告拦截
@@ -359,7 +343,6 @@ rules:
   - RULE-SET,xbox_domain,游戏平台
   - RULE-SET,rockstar_domain,游戏平台
   - RULE-SET,ubisoft_domain,游戏平台
-  - RULE-SET,epic_domain,游戏平台
   - RULE-SET,ea_domain,游戏平台
   - RULE-SET,gog_domain,游戏平台
 
@@ -419,7 +402,6 @@ rule-providers:
   xbox_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/xbox.mrs"}
   ubisoft_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ubisoft.mrs"}
   ea_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ea.mrs"}
-  epic_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/epicgames.mrs"}
   steam_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/steam.mrs"}
   gog_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/gog.mrs"}
   private_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.mrs"}
