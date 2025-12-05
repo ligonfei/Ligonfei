@@ -1,4 +1,4 @@
-<svg width="200" height="200" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<svg width="300" height="200" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="spaceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" style="stop-color:#0f0c29;stop-opacity:1" />
@@ -10,15 +10,15 @@
        <stop offset="0%" style="stop-color:#ec008c;stop-opacity:1" /> <stop offset="100%" style="stop-color:#fc6767;stop-opacity:1" /> </linearGradient>
   </defs>
   
-  <rect x="0" y="0" width="512" height="512" rx="110" ry="110" fill="url(#spaceGradient)" />
+  <rect x="0" y="0" width="600" height="400" rx="60" ry="60" fill="url(#spaceGradient)" />
   
-  <g fill="none" stroke-width="40" stroke-linecap="round">
-    <circle cx="256" cy="256" r="50" fill="#ffffff" stroke="none"/>
+  <g fill="none" stroke-width="36" stroke-linecap="round">
+    <circle cx="300" cy="200" r="45" fill="#ffffff" stroke="none"/>
     
-    <ellipse cx="256" cy="256" rx="160" ry="70" stroke="url(#orbitGrad1)" transform="rotate(-20 256 256)" opacity="0.9"/>
-    <circle cx="380" cy="190" r="25" fill="#00f260" stroke="none"/>
+    <ellipse cx="300" cy="200" rx="150" ry="65" stroke="url(#orbitGrad1)" transform="rotate(-20 300 200)" opacity="0.9"/>
+    <circle cx="420" cy="140" r="22" fill="#00f260" stroke="none"/>
 
-    <ellipse cx="256" cy="256" rx="160" ry="70" stroke="url(#orbitGrad2)" transform="rotate(45 256 256)" opacity="0.9"/>
-    <circle cx="150" cy="350" r="25" fill="#fc6767" stroke="none"/>
+    <ellipse cx="300" cy="200" rx="150" ry="65" stroke="url(#orbitGrad2)" transform="rotate(45 300 200)" opacity="0.9"/>
+    <circle cx="210" cy="300" r="22" fill="#fc6767" stroke="none"/>
   </g>
 </svg>
