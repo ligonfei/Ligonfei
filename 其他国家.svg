@@ -1,27 +1,27 @@
-<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
  <defs>
-  <linearGradient y2="100%" x2="0%" y1="0%" x1="0%" id="spaceGradient">
-   <stop stop-color="#0f0c29" offset="0%"/>
-   <stop stop-color="#302b63" offset="100%"/>
+  <linearGradient id="spaceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+   <stop offset="0%" stop-color="#0f0c29"/>
+   <stop offset="100%" stop-color="#302b63"/>
   </linearGradient>
-  <linearGradient y2="0%" x2="100%" y1="0%" x1="0%" id="orbitGrad1">
-   <stop stop-color="#00f260" offset="0%"/>
-   <stop stop-color="#0575E6" offset="100%"/>
+  <linearGradient id="orbitGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+   <stop offset="0%" stop-color="#00f260"/>
+   <stop offset="100%" stop-color="#0575E6"/>
   </linearGradient>
-  <linearGradient y2="0%" x2="100%" y1="100%" x1="0%" id="orbitGrad2">
-   <stop stop-color="#ec008c" offset="0%"/>
-   <stop stop-color="#fc6767" offset="100%"/>
+  <linearGradient id="orbitGrad2" x1="0%" y1="100%" x2="100%" y2="0%">
+   <stop offset="0%" stop-color="#ec008c"/>
+   <stop offset="100%" stop-color="#fc6767"/>
   </linearGradient>
  </defs>
  <g>
   <title>Layer 1</title>
-  <rect stroke="null" id="svg_1" fill="url(#spaceGradient)" ry="60" rx="60" height="350.66667" width="526" y="24.66667" x="3"/>
-  <g stroke="null" id="svg_2" stroke-linecap="round" stroke-width="36" fill="none">
-   <circle stroke="null" id="svg_3" fill="#ffffff" r="38.65751" cy="200" cx="277.00001"/>
-   <ellipse stroke="url(#orbitGrad1)" id="svg_4" opacity="0.9" transform="matrix(0.807248 -0.293814 0.293814 0.807248 -23.9374 148.122)" ry="65" rx="150" cy="176.56123" cx="308.53101"/>
-   <circle stroke="null" id="svg_5" fill="#00f260" r="18.89923" cy="148.45665" cx="380.08671"/>
-   <ellipse stroke="url(#orbitGrad2)" id="svg_6" opacity="0.9" transform="matrix(0.607444 0.607444 -0.607444 0.607444 216.256 -82.2947)" ry="65" rx="150" cy="182.36262" cx="282.36262"/>
-   <circle stroke="null" id="svg_7" fill="#fc6767" r="18.89923" cy="285.90559" cx="199.68498"/>
+  <rect stroke="null" x="5.00002" y="3.33334" width="289.99997" height="193.33331" rx="60" ry="60" fill="url(#spaceGradient)" id="svg_1"/>
+  <g stroke="null" fill="none" stroke-width="36" stroke-linecap="round" id="svg_2">
+   <circle stroke="null" cx="150.0002" cy="100.00011" r="22.06834" fill="#ffffff" id="svg_3"/>
+   <ellipse stroke="url(#orbitGrad1)" cx="210.42796" cy="-428.82185" rx="150" ry="65" opacity="0.9" id="svg_4" transform="matrix(0.487243 -0.167729 0.177342 0.460832 123.518 332.91)"/>
+   <circle stroke="null" cx="212.22184" cy="70.57566" r="10.78896" fill="#00f260" id="svg_5"/>
+   <ellipse stroke="url(#orbitGrad2)" cx="-307.18355" cy="16.33414" rx="150" ry="65" opacity="0.9" id="svg_6" transform="matrix(0.366644 0.34677 -0.366644 0.34677 268.616 200.858)"/>
+   <circle stroke="null" cx="103.33397" cy="149.04085" r="10.78896" fill="#fc6767" id="svg_7"/>
   </g>
  </g>
 </svg>
