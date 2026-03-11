@@ -1,0 +1,592 @@
+port: 7890
+socks-port: 7891
+mixed-port: 7894
+redir-port: 7892
+tproxy-port: 7893
+allow-lan: true
+bind-address: "*"
+find-process-mode: strict
+mode: rule
+log-level: warning
+ipv6: false 
+external-controller: 0.0.0.0:9090
+external-ui: zash
+external-ui-url: "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip" 
+unified-delay: true
+tcp-concurrent: true
+disable-keep-alive: false
+keep-alive-idle: 30
+keep-alive-interval: 10
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+
+
+
+
+
+tun:
+  enable: true
+  stack: system
+  device: Meta
+  dns-hijack:
+  - any:53
+  - tcp://any:53
+  auto-detect-interface: true
+  auto-route: true
+  strict-route: true
+  udp-timeout: 300
+  route-exclude-address:
+  - 10.0.0.0/8
+  - 127.0.0.0/8
+  - 169.254.0.0/16
+  - 172.16.0.0/12
+  - 192.168.0.0/16
+  - 224.0.0.0/4
+
+
+
+
+
+sniffer:
+  enable: true
+  override-destination: true
+  sniff:
+    HTTP:
+      ports:
+      - 80
+      - 8080-8880
+    TLS:
+      ports:
+      - 443
+      - 5228
+      - 8443
+    QUIC:
+      ports:
+      - 443
+      - 8443
+  force-dns-mapping: false
+  parse-pure-ip: true
+  force-domain:
+  - +.v2ex.com
+  skip-domain:
+  - Mijia Cloud
+  - +.push.apple.com
+  skip-dst-address:
+  - 91.105.192.0/23
+  - 91.108.4.0/22
+  - 91.108.8.0/21
+  - 91.108.16.0/21
+  - 91.108.56.0/22
+  - 95.161.64.0/20
+  - 149.154.160.0/20
+  - 185.76.151.0/24
+  - 2001:67c:4e8::/48
+  - 2001:b28:f23c::/47
+  - 2001:b28:f23f::/48
+  - 2a0a:f280:203::/48
+
+
+
+
+
+dns:
+  cache-algorithm: arc
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: rule
+  fake-ip-filter:
+    - "rule-set,cn_domain"
+    - "rule-set,private_domain"
+
+  respect-rules: true
+
+  direct-nameserver:
+    - 192.168.31.1
+    - 223.6.6.6
+    - 1.12.12.129
+    - 119.29.29.29
+    - 202.99.224.67
+    - 202.99.224.68
+
+  nameserver:
+    - https://8.8.8.8:443/dns-query#自建&h3=true
+    - https://8.8.4.4:443/dns-query#自建&h3=true
+    - https://1.1.1.1:443/dns-query#自建&h3=true
+    - https://1.0.0.1:443/dns-query#自建&h3=true
+
+  nameserver-policy:
+    rule-set:cn_domain:
+      - https://1.12.12.12:443/dns-query#DIRECT&h3=false
+      - https://120.53.53.53:443/dns-query#DIRECT&h3=false
+      - https://223.5.5.5:443/dns-query#DIRECT&h3=true
+      - https://223.6.6.6:443/dns-query#DIRECT&h3=true
+
+  proxy-server-nameserver:
+    - https://1.12.12.12:443/dns-query#DIRECT&h3=false
+    - https://120.53.53.53:443/dns-query#DIRECT&h3=false
+    - https://223.5.5.5:443/dns-query#DIRECT&h3=true
+    - https://223.6.6.6:443/dns-query#DIRECT&h3=true
+
+  fallback:
+    - https://1.1.1.1/dns-query#自建
+    - https://8.8.8.8/dns-query#自建
+
+  fallback-filter:
+    geoip: false
+    ipcidr:
+      - 240.0.0.0/4
+    domain:
+      - +.twitter.com
+      - +.facebook.com
+      - +.youtube.com
+      - +.google.com
+
+
+
+
+
+_anchors:
+  provider_base: &p
+    type: http
+    interval: 7200
+    health-check:
+      enable: true
+      url: "https://www.gstatic.com/generate_204"
+      interval: 300
+
+  test_config: &test_config
+    url: "https://www.gstatic.com/generate_204"
+    interval: 300
+    lazy: false
+    timeout: 5000
+
+  all_providers: &all_providers
+    - 自建
+    - 雪山
+    - 西部数据
+    - 山海
+    - Kitty Network
+    - 狗子云
+
+  url_test_base: &url_test_base
+    type: url-test
+    <<: *test_config
+    hidden: true
+
+  airport_group: &airport_group
+    <<: *url_test_base
+
+  country_nodes: &country_nodes
+    <<: *url_test_base
+    use: *all_providers
+    tolerance: 50
+
+  load_balance_base: &load_balance_base
+    use: *all_providers
+    <<: *test_config
+    hidden: true
+
+  platform_group: &platform_group
+    type: select
+    proxies:
+      - DIRECT
+      - 节点选择
+      - 自动选择
+      - 自建
+      - 雪山
+      - 西部数据
+      - 山海
+      - Kitty Network
+      - 狗子云
+      - 负载均衡(散列)
+      - 自动回退
+      - 香港节点
+      - 台湾节点
+      - 美国节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 欧洲节点
+      - 其他地区
+    interval: 60
+    lazy: false
+    timeout: 5000
+
+  rule_domain_base: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
+  rule_ip_base: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
+
+proxy-providers:
+
+
+
+proxy-groups:
+  - name: 节点选择
+    type: select
+    proxies:
+      - DIRECT
+      - 自建
+      - 雪山
+      - 西部数据
+      - 山海
+      - Kitty Network
+      - 狗子云
+    <<: *test_config
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/nodeselection.png"
+
+  - name: 自动选择
+    type: url-test
+    use: *all_providers
+    <<: *test_config
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/autoselection.png"  
+
+  - name: 自建
+    <<: *airport_group
+    use: [自建]
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/TestFlight.png"
+
+  - name: 雪山
+    <<: *airport_group
+    use: [雪山]
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/xueshan.png"
+
+  - name: 西部数据
+    <<: *airport_group
+    use: [西部数据]
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/WestData.png"
+
+  - name: 山海
+    <<: *airport_group
+    use: [山海]
+    icon: "https://shanhai.one/images/logo.png?raw=true"
+
+  - name: Kitty Network
+    <<: *airport_group
+    use: [Kitty Network]
+    icon: "https://kitty.su/images/logo.png?raw=true"
+
+  - name: 狗子云
+    <<: *airport_group
+    use: [狗子云]
+    icon: "https://pan.090503.xyz/f/nnfm/42EB70BF-DBEE-443B-A05B-329A10933CAB.png"
+
+
+  - name: 广告拦截
+    type: select
+    proxies: [REJECT, DIRECT]
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/adguard.png"
+    lazy: true
+    timeout: 5000
+
+  - name: 密码管理器
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/1password.png"
+
+  - name: 交易所
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/BTC.png"
+
+  - name: AI
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/chatgpt.png"
+
+  - name: Speedtest
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Speedtest.png"
+
+  - name: Telegram
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Telegram.png"
+
+  - name: 推特
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Twitter.png"
+
+  - name: Facebook
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Facebook.png"
+
+  - name: TikTok
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/tiktok.png"
+
+  - name: YouTube
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/YouTube.png"
+
+  - name: Disney+
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Disney.png"
+
+  - name: NETFLIX
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/netflix.png"
+
+  - name: Spotify
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Spotify.png"
+
+  - name: Emby
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Emby.png"
+
+  - name: 游戏平台
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Game.png"
+
+  - name: GitHub
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/GitHub.png"
+
+  - name: Bing
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/bing.png"
+
+  - name: Microsoft
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/microsoft.png"
+
+  - name: Google
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/google.png"
+
+  - name: Apple
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/appleclassic.png"
+
+  - name: 国内平台
+    type: select
+    proxies: [DIRECT, 节点选择]
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/China.png"
+    lazy: false
+    timeout: 5000
+
+  - name: 漏网之鱼
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/fish.png"
+
+  - name: 负载均衡(散列)
+    type: load-balance
+    strategy: consistent-hashing
+    <<: *load_balance_base
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/merry_go.png"
+
+  - name: 负载均衡(轮询)
+    type: load-balance
+    strategy: round-robin
+    <<: *load_balance_base
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/balance.png"
+
+  - name: 自动回退
+    type: fallback
+    <<: *load_balance_base
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/back.png"
+
+  - name: 台湾节点
+    <<: *country_nodes
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Taiwan.png"
+    filter: '(?i)^[^：:]*[：:]\s*(?:[^\p{Han}A-Za-z0-9]+\s*)*(?:台湾|TW|Taiwan)(?:\s|$).*$'
+
+  - name: 香港节点
+    <<: *country_nodes
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Hong_Kong.png"
+    filter: '(?i)^[^：:]*[：:]\s*(?:[^\p{Han}A-Za-z0-9]+\s*)*(?:香港|HK|Hong\s*Kong)(?:\s|$).*$'
+
+  - name: 日本节点
+    <<: *country_nodes
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Japan.png"
+    filter: '(?i)^[^：:]*[：:]\s*(?:[^\p{Han}A-Za-z0-9]+\s*)*(?:日本|JP|Japan)(?:\s|$).*$'
+
+  - name: 美国节点
+    <<: *country_nodes
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/United_States.png"
+    filter: '(?i)^[^：:]*[：:]\s*(?:[^\p{Han}A-Za-z0-9]+\s*)*(?:美国|US|USA|United\s*States)(?:\s|$).*$'
+
+  - name: 新加坡节点
+    <<: *country_nodes
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Singapore.png"
+    filter: '(?i)^[^：:]*[：:]\s*(?:[^\p{Han}A-Za-z0-9]+\s*)*(?:新加坡|SG|Singapore)(?:\s|$).*$'
+
+  - name: 韩国节点
+    <<: *country_nodes
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Korea.png"
+    filter: '(?i)^[^：:]*[：:]\s*(?:[^\p{Han}A-Za-z0-9]+\s*)*(?:韩国|KR|Korea|South\s*Korea)(?:\s|$).*$'
+
+  - name: 欧洲节点
+    <<: *country_nodes
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/European_Union.png"
+    filter: '(?i)^[^：:]*[：:]\s*(?:[^\p{Han}A-Za-z0-9]+\s*)*(?:德国|DE|Germany|法国|FR|France|英国|UK|GB|United\s*Kingdom|荷兰|NL|Netherlands|意大利|IT|Italy|西班牙|ES|Spain|葡萄牙|PT|Portugal|瑞士|CH|Switzerland|瑞典|SE|Sweden|挪威|NO|Norway|芬兰|FI|Finland|丹麦|DK|Denmark|比利时|BE|Belgium|爱尔兰|IE|Ireland|奥地利|AT|Austria|波兰|PL|Poland|捷克|CZ|Czech|匈牙利|HU|Hungary|卢森堡|LU|Luxembourg|冰岛|IS|Iceland)(?:\s|$).*$'
+
+  - name: 其他地区
+    <<: *country_nodes
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/qita.png"
+    filter: '(?i)^[^：:]*[：:].*$'
+    exclude-filter: '(?i)^[^：:]*[：:]\s*(?:[^\p{Han}A-Za-z0-9]+\s*)*(?:台湾|TW|Taiwan|香港|HK|Hong\s*Kong|日本|JP|Japan|美国|US|USA|United\s*States|新加坡|SG|Singapore|韩国|KR|Korea|South\s*Korea|德国|DE|Germany|法国|FR|France|英国|UK|GB|United\s*Kingdom|荷兰|NL|Netherlands|意大利|IT|Italy|西班牙|ES|Spain|葡萄牙|PT|Portugal|瑞士|CH|Switzerland|瑞典|SE|Sweden|挪威|NO|Norway|芬兰|FI|Finland|丹麦|DK|Denmark|比利时|BE|Belgium|爱尔兰|IE|Ireland|奥地利|AT|Austria|波兰|PL|Poland|捷克|CZ|Czech|匈牙利|HU|Hungary|卢森堡|LU|Luxembourg|冰岛|IS|Iceland)(?:\s|$).*'
+
+  - name: GLOBAL
+    type: select
+    proxies:
+      - DIRECT
+      - REJECT
+      - 节点选择
+      - 自动选择
+      - 自建
+      - 雪山
+      - 西部数据
+      - 山海
+      - Kitty Network
+      - 狗子云
+      - 广告拦截
+      - 密码管理器
+      - 交易所
+      - AI
+      - Speedtest
+      - Telegram
+      - 推特
+      - Facebook
+      - TikTok
+      - YouTube
+      - Disney+
+      - NETFLIX
+      - Spotify
+      - Emby
+      - 游戏平台
+      - GitHub
+      - Bing
+      - Microsoft
+      - Google
+      - Apple
+      - 国内平台
+      - 漏网之鱼
+      - 负载均衡(散列)
+      - 负载均衡(轮询)
+      - 自动回退
+      - 香港节点
+      - 台湾节点
+      - 美国节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 欧洲节点
+      - 其他地区
+    interval: 60
+    lazy: false
+    timeout: 5000
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Global.png"
+
+rules:
+  - DST-PORT,22,DIRECT
+
+  - RULE-SET,ads_domain,广告拦截
+  - RULE-SET,adsqiufeng_domain,广告拦截
+
+  - RULE-SET,password_manager_domain,密码管理器
+
+  - RULE-SET,private_domain,国内平台
+  - RULE-SET,private_ip,国内平台,no-resolve
+
+  - RULE-SET,binance_domain,交易所
+  - RULE-SET,OKX_domain,交易所
+  - RULE-SET,bybit_domain,交易所
+
+  - RULE-SET,ai_domain,AI
+  - RULE-SET,ai_ip,AI,no-resolve
+
+  - RULE-SET,speedtest_domain,Speedtest
+
+  - RULE-SET,telegram_domain,Telegram
+  - RULE-SET,telegram_ip,Telegram,no-resolve
+
+  - RULE-SET,x_domain,推特
+  - RULE-SET,twitter_domain,推特
+  - RULE-SET,twitter_ip,推特,no-resolve
+
+  - RULE-SET,facebook_domain,Facebook
+  - RULE-SET,facebook_ip,Facebook,no-resolve
+
+  - RULE-SET,tiktok_domain,TikTok
+
+  - RULE-SET,youtube_domain,YouTube
+
+  - RULE-SET,disney_domain,Disney+
+
+  - RULE-SET,netflix_domain,NETFLIX
+  - RULE-SET,netflix_ip,NETFLIX,no-resolve
+
+  - RULE-SET,spotify_domain,Spotify
+
+  - RULE-SET,emby_domain,Emby
+
+  - RULE-SET,epicgames_domain,DIRECT
+  - RULE-SET,steam_domain,游戏平台
+  - RULE-SET,xbox_domain,游戏平台
+  - RULE-SET,rockstar_domain,游戏平台
+  - RULE-SET,ubisoft_domain,游戏平台
+  - RULE-SET,ea_domain,游戏平台
+  - RULE-SET,gog_domain,游戏平台
+
+  - RULE-SET,github_domain,GitHub
+
+  - RULE-SET,bing_domain,Bing
+
+  - RULE-SET,microsoft_domain,Microsoft
+
+  - RULE-SET,google_domain,Google
+  - RULE-SET,google_ip,Google,no-resolve
+
+  - RULE-SET,apple_domain,Apple
+
+  - RULE-SET,gfw_domain,节点选择
+
+  - RULE-SET,cn_domain,国内平台
+  - RULE-SET,cn_ip,国内平台,no-resolve
+
+  - MATCH,漏网之鱼
+
+rule-providers:
+  ads_domain: { <<: *domain, url: "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockmihomo.mrs"}
+  adsqiufeng_domain: { <<: *domain, url: "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash.mrs"}
+  password_manager_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-password-management.mrs"}
+  private_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.mrs"}
+  binance_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/binance.mrs"}
+  OKX_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/okx.mrs"}
+  bybit_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bybit.mrs"}
+  ai_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs"}
+  speedtest_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-speedtest.mrs"}
+  telegram_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/telegram.mrs"}
+  x_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/x.mrs"}
+  twitter_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/twitter.mrs"}
+  facebook_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/facebook.mrs"}
+  tiktok_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/tiktok.mrs"}
+  youtube_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.mrs"}
+  disney_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/disney.mrs"}
+  netflix_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/netflix.mrs"}
+  spotify_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/spotify.mrs"}
+  emby_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-emby.mrs"}
+  epicgames_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/epicgames.mrs"}
+  steam_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/steam.mrs"}
+  xbox_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/xbox.mrs"}
+  rockstar_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/rockstar.mrs"}
+  ubisoft_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ubisoft.mrs"}
+  ea_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ea.mrs"}
+  gog_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/gog.mrs"}
+  github_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/github.mrs"}
+  bing_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bing.mrs"}
+  microsoft_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/microsoft.mrs"}
+  google_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google.mrs"}
+  apple_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/apple.mrs"}
+  gfw_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/gfw.mrs"}
+  cn_domain: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/cn.mrs"}
+
+  private_ip: { <<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"}
+  ai_ip: { <<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/ai.mrs"}
+  telegram_ip: { <<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.mrs"}
+  twitter_ip: { <<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/twitter.mrs"}
+  facebook_ip: { <<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/facebook.mrs"}
+  netflix_ip: { <<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/netflix.mrs"}
+  google_ip: { <<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/google.mrs"}
+  cn_ip: { <<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/cn.mrs"}
