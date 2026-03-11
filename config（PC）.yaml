@@ -95,56 +95,51 @@ dns:
   cache-algorithm: arc
   enable: true
   listen: 0.0.0.0:1053
-  ipv6: false
+  ipv6: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter-mode: rule
   fake-ip-filter:
-    - "rule-set,cn_domain"
-    - "rule-set,private_domain"
-
+  - RULE-SET,cn_domain,real-ip
+  - RULE-SET,private_domain,real-ip
+  - MATCH,fake-ip
   respect-rules: true
-
   direct-nameserver:
-    - 192.168.31.1
-    - 223.6.6.6
-    - 1.12.12.129
-    - 119.29.29.29
-    - 202.99.224.67
-    - 202.99.224.68
-
+  - 223.5.5.5
+  - 223.6.6.6
+  - 1.12.12.12
+  - 120.53.53.53
   nameserver:
-    - https://8.8.8.8:443/dns-query#自建&h3=true
-    - https://8.8.4.4:443/dns-query#自建&h3=true
-    - https://1.1.1.1:443/dns-query#自建&h3=true
-    - https://1.0.0.1:443/dns-query#自建&h3=true
-
+  - https://8.8.8.8:443/dns-query#自建&h3=true
+  - https://8.8.4.4:443/dns-query#自建&h3=true
+  - https://1.1.1.1:443/dns-query#自建&h3=true
+  - https://1.0.0.1:443/dns-query#自建&h3=true
   nameserver-policy:
     rule-set:cn_domain:
-      - https://1.12.12.12:443/dns-query#DIRECT&h3=false
-      - https://120.53.53.53:443/dns-query#DIRECT&h3=false
-      - https://223.5.5.5:443/dns-query#DIRECT&h3=true
-      - https://223.6.6.6:443/dns-query#DIRECT&h3=true
-
-  proxy-server-nameserver:
     - https://1.12.12.12:443/dns-query#DIRECT&h3=false
     - https://120.53.53.53:443/dns-query#DIRECT&h3=false
     - https://223.5.5.5:443/dns-query#DIRECT&h3=true
     - https://223.6.6.6:443/dns-query#DIRECT&h3=true
-
+  proxy-server-nameserver:
+  - https://1.12.12.12:443/dns-query#DIRECT&h3=false
+  - https://120.53.53.53:443/dns-query#DIRECT&h3=false
+  - https://223.5.5.5:443/dns-query#DIRECT&h3=true
+  - https://223.6.6.6:443/dns-query#DIRECT&h3=true
   fallback:
-    - https://1.1.1.1/dns-query#自建
-    - https://8.8.8.8/dns-query#自建
-
+  - https://1.1.1.1/dns-query#自建
+  - https://8.8.8.8/dns-query#自建
   fallback-filter:
     geoip: false
     ipcidr:
-      - 240.0.0.0/4
+    - 240.0.0.0/4
     domain:
-      - +.twitter.com
-      - +.facebook.com
-      - +.youtube.com
-      - +.google.com
+    - +.twitter.com
+    - +.facebook.com
+    - +.youtube.com
+    - +.google.com
+  default-nameserver:
+  - 223.5.5.5
+  - 119.29.29.29
 
 
 
