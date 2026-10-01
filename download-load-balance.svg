@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="none">
+  <title>Download load balance</title>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 43h40c7.7 0 14 6.3 14 14v20c0 7.7-6.3 14-14 14H28c-7.7 0-14-6.3-14-14V57c0-7.7 6.3-14 14-14Z" fill="#29ADE6" stroke="#0370C7" stroke-width="4"/>
+    <path d="M172 43h-40c-7.7 0-14 6.3-14 14v20c0 7.7 6.3 14 14 14h40c7.7 0 14-6.3 14-14V57c0-7.7-6.3-14-14-14Z" fill="#82EBFE" stroke="#0370C7" stroke-width="4"/>
+    <path d="M100 24v23c0 11-9 20-20 20H48M100 24v23c0 11 9 20 20 20h32" stroke="#4F5A68" stroke-width="5"/>
+    <path d="M30 57h30M140 57h30" stroke="#C2F9FD" stroke-width="4"/>
+    <circle cx="68" cy="76" r="3.5" fill="#FFB104" stroke="none"/>
+    <circle cx="132" cy="76" r="3.5" fill="#0370C7" stroke="none"/>
+    <path d="M100 67v47" stroke="#FFB104" stroke-width="8"/>
+    <circle cx="100" cy="67" r="11" fill="#FFB104" stroke="#FFF3C4" stroke-width="3"/>
+    <path d="M92 114h16" stroke="#FFF3C4" stroke-width="3"/>
+
+    <path d="M91 116c0-5 4-9 9-9s9 4 9 9v25l13-13c3.5-3.5 9.2-3.5 12.7 0s3.5 9.2 0 12.7l-22.3 22.3c-6.8 6.8-17.8 6.8-24.6 0l-22.3-22.3c-3.5-3.5-3.5-9.2 0-12.7s9.2-3.5 12.7 0L91 141v-25Z" fill="#0370C7"/>
+    <path d="M100 117v28M84 137l16 16 16-16" stroke="#82EBFE" stroke-width="4"/>
+    <path d="M51 167h98c7.7 0 14 6.3 14 14H37c0-7.7 6.3-14 14-14Z" fill="#B8C4D6" stroke="#4F5A68" stroke-width="4"/>
+    <path d="M55 167h90" stroke="#779ABD" stroke-width="6"/>
+
+  </g>
+</svg>

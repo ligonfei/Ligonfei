@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="none">
+  <title>Download</title>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M51 132h98c9.4 0 17 7.6 17 17v12c0 9.4-7.6 17-17 17H51c-9.4 0-17-7.6-17-17v-12c0-9.4 7.6-17 17-17Z" fill="#B8C4D6" stroke="#4F5A68" stroke-width="4"/>
+    <path d="M34 149c0-9.4 7.6-17 17-17h98c9.4 0 17 7.6 17 17v7H34v-7Z" fill="#779ABD"/>
+    <path d="M55 151h29" stroke="#C2F9FD" stroke-width="5"/>
+    <circle cx="143" cy="151" r="4" fill="#FFB104" stroke="none"/>
+
+    <path d="M91 35c0-5 4-9 9-9s9 4 9 9v63l17-17c3.5-3.5 9.2-3.5 12.7 0s3.5 9.2 0 12.7l-30.3 30.3c-4.7 4.7-12.1 4.7-16.8 0L61.3 93.7c-3.5-3.5-3.5-9.2 0-12.7s9.2-3.5 12.7 0L91 98V35Z" fill="#0370C7"/>
+    <path d="M100 35v62" stroke="#82EBFE" stroke-width="4"/>
+    <path d="m78 90 22 22 22-22" stroke="#29ADE6" stroke-width="5"/>
+    <path d="M56 173h88" stroke="#4F5A68" stroke-width="4"/>
+  </g>
+</svg>

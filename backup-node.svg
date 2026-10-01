@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="none">
+  <title>Backup node</title>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M41 65c0-7.7 6.3-14 14-14h64c7.7 0 14 6.3 14 14v54c0 7.7-6.3 14-14 14H55c-7.7 0-14-6.3-14-14V65Z" fill="#E2EAF3" stroke="#779ABD" stroke-width="4"/>
+    <path d="M49 73c0-4.4 3.6-8 8-8h60c4.4 0 8 3.6 8 8v17H49V73Z" fill="#B8C4D6"/>
+    <path d="M49 90h76v25c0 5-4 9-9 9H58c-5 0-9-4-9-9V90Z" fill="#779ABD"/>
+    <path d="M61 101h24" stroke="#C2F9FD" stroke-width="5"/>
+    <circle cx="108" cy="101" r="3.5" fill="#FFB104" stroke="none"/>
+    <path d="M67 133v13M101 133v13M57 146h54" stroke="#4F5A68" stroke-width="4"/>
+
+    <path d="M119 42c0-7.7 6.3-14 14-14h31c7.7 0 14 6.3 14 14v51c0 7.7-6.3 14-14 14h-31c-7.7 0-14-6.3-14-14V42Z" fill="#29ADE6" stroke="#0370C7" stroke-width="4"/>
+    <path d="M127 50c0-3.3 2.7-6 6-6h31c3.3 0 6 2.7 6 6v17h-43V50Z" fill="#82EBFE"/>
+    <path d="M127 67h43v22c0 4.4-3.6 8-8 8h-27c-4.4 0-8-3.6-8-8V67Z" fill="#0370C7"/>
+    <path d="M137 78h13" stroke="#C2F9FD" stroke-width="4"/>
+    <circle cx="158" cy="78" r="3" fill="#FFB104" stroke="none"/>
+
+    <path d="M39 39C25 45 18 59 18 75" stroke="#FFB104" stroke-width="6"/>
+    <path d="m18 75-8-10M18 75l10-7" stroke="#FFB104" stroke-width="6"/>
+    <path d="M161 158C176 152 183 138 183 121" stroke="#FFB104" stroke-width="6"/>
+    <path d="m183 121-10 7M183 121l7 10" stroke="#FFB104" stroke-width="6"/>
+  </g>
+</svg>
