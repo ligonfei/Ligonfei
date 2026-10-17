@@ -1,40 +1,90 @@
-port: 7890
-socks-port: 7891
-mixed-port: 10801
-redir-port: 7892
-tproxy-port: 7893
-ipv6: false
-mode: Rule
+# ==============================================================================
+#                  mihomo (Clash.Meta) PC 裸核定制配置文件
+# ==============================================================================
+# 官方文档: https://wiki.metacubex.one/config/
+# 配置规范: https://github.com/MetaCubeX/mihomo/blob/Meta/docs/config.yaml
+#
+# 核心适用场景: PC 裸核运行 (Windows/macOS/Linux)
+# 特性侧重: Mixed-Port、Wintun 高并发吞吐、局域网共享、进程/路径规则匹配、纯净 Fake-IP
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. 基础入站与端口监听 (Inbound & Ports)
+# ------------------------------------------------------------------------------
+
+# HTTP(S) 与 SOCKS5 混合代理端口
+mixed-port: 7890
+
+# 允许局域网设备连接入站代理端口 (供局域网内手机、Switch、PS5、电视盒子等接入)
 allow-lan: true
-unified-delay: true
-tcp-concurrent: true
-log-level: info
+
+# 监听绑定的网卡 IP 地址 (* 监听所有可用网卡)
 bind-address: "*"
-find-process-mode: always
-external-controller: 127.0.0.1:9090
-external-ui-url: "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
-external-ui: "dashboard"
+
+# 跳过鉴权的局域网 IP/CIDR 地址段
+skip-auth-prefixes:
+  # IPv4 回环与私网保留地址
+  - 127.0.0.1/8       # RFC 1122 Loopback
+  - 10.0.0.0/8        # RFC 1918 私网 A 类
+  - 172.16.0.0/12     # RFC 1918 私网 B 类
+  - 192.168.0.0/16    # RFC 1918 私网 C 类
+  - 100.64.0.0/10     # RFC 6598 CGNAT / Tailscale 虚拟网卡
+  - 169.254.0.0/16    # RFC 3927 Link-Local
+  # IPv6 回环与私网保留地址
+  - ::1/128
+  - fc00::/7
+  - fe80::/10
+
+# 允许访问代理的局域网客户端 IP 段白名单
+lan-allowed-ips:
+  - 0.0.0.0/0
+  - ::/0
+
+# ------------------------------------------------------------------------------
+# 2. 全局通用与性能控制 (General & Runtime Settings)
+# ------------------------------------------------------------------------------
+
+# 进程匹配模式 (用于 PROCESS-NAME / PROCESS-PATH 规则)
+# strict: 仅当规则集包含进程匹配规则时触发进程解析，兼顾 CPU 性能与分流精准度
+find-process-mode: strict
+
+# 运行模式: rule (规则分流) | global (全局代理) | direct (全局直连)
+mode: rule
+
+# 日志输出等级: silent | error | warning | info | debug
+log-level: info
+
+# 全局 IPv6 开关 (PC 端若宽带无公网 IPv6 或节点未完整覆盖，设为 false 可避免 Happy Eyeballs 引起的延迟抖动)
+ipv6: false
+
+# RESTful 外部控制器 API 监听地址 (用于连接 Web 仪表盘，如 Zashboard / Yacd / Metacubexd)
+external-controller: 0.0.0.0:9090
+
+# RESTful API 鉴权密钥 (Token)
 secret: ""
 
-skip-auth-prefixes:
-  - 10.0.0.0/8
-  - 172.16.0.0/12
-  - 192.168.0.0/16
-  - 127.0.0.1/8
-  - 100.64.0.0/10
+# 外部 Web 仪表盘存放本地路径
+external-ui: "dashboard"
 
-profile:
-  store-selected: true
-  store-fake-ip: true
+# 外部 Web 仪表盘自动下载/更新压缩包 URL
+external-ui-url: "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
 
-ntp:
-  enable: true
-  write-to-system: true
-  server: ntp.ntsc.ac.cn
-  port: 123
-  interval: 60
+# TCP 并发连接开关 (多 IP 并发建连，优选最快握手 IP，显著降低首包延迟)
+tcp-concurrent: true
 
+# 统一延迟测速算法开关 (纯 TCP/TLS RTT 时延)
+unified-delay: true
+
+# TCP Keep-Alive 保活探测控制 (PC 端调整为常规桌面值，降低无谓心跳与 CPU 占用)
+disable-keep-alive: false
+keep-alive-idle: 300
+keep-alive-interval: 30
+
+# ------------------------------------------------------------------------------
+# 3. 本地主机名解析映射 (Hosts Mapping)
+# ------------------------------------------------------------------------------
 hosts:
+  # Google FCM 推送直连
   mtalk.google.com: 142.250.107.188
   alt1-mtalk.google.com: 74.125.200.188
   alt2-mtalk.google.com: 192.178.220.188
@@ -44,27 +94,121 @@ hosts:
   alt6-mtalk.google.com: 142.250.115.188
   alt7-mtalk.google.com: 192.178.131.188
   alt8-mtalk.google.com: 172.253.132.188
-  anyrouter.top: 47.246.23.192
 
+  # 公共 DNS 引导静态 IP
+  anyrouter.top: 47.246.23.192
+  cloudflare-dns.com: 1.0.0.1
+  dns.google: 8.8.8.8
+
+  # 机场专有节点别名映射
+  666b970d-ef5e-4272-ac42-3a947b8fedca.qq9doijb69.sbs: 2c692199-56c8-4bea-9574-551d497f7338.qq9doijb69.sbs
+  195427a3-0136-410a-bbca-025216d7dd49.ciprmks0f3.sbs: 96c39f9d-c918-4035-a916-d8875ecef22f.ciprmks0f3.sbs
+
+# ------------------------------------------------------------------------------
+# 4. 状态持久化配置 (Profile & Cache Storage)
+# ------------------------------------------------------------------------------
+profile:
+  # 持久化手动选择的节点/策略组至 cache.db
+  store-selected: true
+  # 持久化 Fake-IP 映射表至 cache.db (重启后长连接依然有效)
+  store-fake-ip: true
+
+# ------------------------------------------------------------------------------
+# 5. TUN 虚拟网卡驱动与路由配置 (PC 裸核专用)
+# ------------------------------------------------------------------------------
+tun:
+  enable: true
+
+  # 虚拟网卡名称 (Windows 下 Wintun 驱动将生成名为 Meta 的网络适配器)
+  device: Meta
+
+  # 网络协议栈实现
+  # mixed: TCP 采用 system 协议栈获得千兆线速性能，UDP 采用 gvisor 确保 Full Cone NAT
+  stack: mixed
+
+  # DNS 强制劫持 (拦截所有 53 端口请求并重定向至内置 DNS)
+  dns-hijack:
+    - any:53
+    - tcp://any:53
+
+  # 自动检测默认物理出口网卡 (插拔网线、切换 Wi-Fi 时自适应)
+  auto-detect-interface: true
+
+  # 自动设置系统默认路由表 (将 0.0.0.0/0 路由重定向至 TUN)
+  auto-route: true
+
+  # 严格路由模式 (设为 false 避免与 Hyper-V/WSL2/局域网桥接发生冲突)
+  strict-route: false
+
+  # 全锥型 NAT (Endpoint-Independent NAT，利于 BT 下载、Steam P2P 联机和语音通信)
+  endpoint-independent-nat: true
+
+  # UDP 会话空闲超时时间 (秒)
+  udp-timeout: 300
+
+  # 虚拟网卡 MTU (PC 端恢复标准 1500，保障局域网千兆/万兆极速吞吐)
+  mtu: 1500
+
+  # 绕过 TUN 路由的 IP/CIDR 地址段 (内网直连)
+  route-exclude-address:
+    - 0.0.0.0/8
+    - 10.0.0.0/8
+    - 100.64.0.0/10
+    - 127.0.0.0/8
+    - 169.254.0.0/16
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+    - 224.0.0.0/4
+    - 240.0.0.0/4
+    - 255.255.255.255/32
+    - "::1/128"
+    - "fc00::/7"
+    - "fe80::/10"
+    - "ff00::/8"
+
+# ------------------------------------------------------------------------------
+# 6. 流量嗅探模块 (Sniffer)
+# ------------------------------------------------------------------------------
 sniffer:
   enable: true
   force-dns-mapping: true
   parse-pure-ip: true
   override-destination: true
+
   sniff:
     HTTP:
-      ports: [80, 8080-8880]
+      ports: [80, '8080-8880']
       override-destination: true
     TLS:
-      ports: [443, 5228, 8443]
+      ports: [443, 8443, 2053, 2083, 2087, 2096]
+      override-destination: true
     QUIC:
       ports: [443, 8443]
+
   force-domain:
     - "+.v2ex.com"
+
   skip-domain:
     - "Mijia Cloud"
     - "+.push.apple.com"
+    - "+.apple.com"
+    - "dlg.io.mi.com"
+    # Windows 网络连通性测试 (NCSI) 必须跳过嗅探，解决托盘无网络感叹号
+    - "+.msftconnecttest.com"
+    - "+.msftncsi.com"
+
   skip-dst-address:
+    - 10.0.0.0/8
+    - 127.0.0.0/8
+    - 169.254.0.0/16
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+    - 224.0.0.0/4
+    - 240.0.0.0/4
+    - "::1/128"
+    - "fc00::/7"
+    - "fe80::/10"
+    # Telegram 官方数据中心 IP 段
     - 91.105.192.0/23
     - 91.108.4.0/22
     - 91.108.8.0/21
@@ -78,81 +222,121 @@ sniffer:
     - 2001:b28:f23f::/48
     - 2a0a:f280:203::/48
 
-tun:
-  enable: true
-  device: Meta
-  stack: gvisor
-  dns-hijack:
-    - any:53
-    - tcp://any:53
-  udp-timeout: 300
-  auto-route: true
-  strict-route: true
-  auto-detect-interface: true
-  endpoint-independent-nat: true
-  route-exclude-address:
-    - 10.0.0.0/8
-    - 127.0.0.0/8
-    - 169.254.0.0/16
-    - 172.16.0.0/12
-    - 192.168.0.0/16
-    - 224.0.0.0/4
-
+# ------------------------------------------------------------------------------
+# 7. 内置 DNS 高级架构与防泄漏策略 (DNS Architecture)
+# ------------------------------------------------------------------------------
 dns:
   enable: true
   use-hosts: true
   ipv6: false
   cache-algorithm: arc
-  prefer-h3: true
+  prefer-h3: false
   listen: 0.0.0.0:1053
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  fake-ip-range6: fdfe:dcba:9876::1/64
+  fake-ip-ttl: 1
+
   fake-ip-filter-mode: rule
   fake-ip-filter:
-    - DOMAIN-SUFFIX,googleapis.cn,fake-ip
-    - DOMAIN-SUFFIX,rom.miui.com,real-ip
-    - DOMAIN-SUFFIX,miui.com,real-ip
-    - RULE-SET,cn_domain,real-ip
-    - RULE-SET,private_domain,real-ip
-    - RULE-SET,Fake-IP-Filter,real-ip
+    # 1. 机场节点与私有解析域名 (必须真实 IP，防握手死锁)
+    #（机场私有dns）
+
+    # 2. Windows 系统网络探测与 Xbox 联机
+    - DOMAIN-SUFFIX,msftconnecttest.com,real-ip
+    - DOMAIN-SUFFIX,msftncsi.com,real-ip
+    - DOMAIN-SUFFIX,xboxlive.com,real-ip
+
+    # 3. 本地 LAN 与局域网广播域名
+    - DOMAIN-SUFFIX,lan,real-ip
+    - DOMAIN-SUFFIX,local,real-ip
+    - DOMAIN-SUFFIX,internal,real-ip
+    - DOMAIN-SUFFIX,home.arpa,real-ip
+    - DOMAIN,localhost.ptlogin2.qq.com,real-ip
+
+    # 4. NTP 网络授时服务
+    - DOMAIN-KEYWORD,ntp,real-ip
+    - DOMAIN-KEYWORD,time,real-ip
+
+    # 5. 国内直连系统级推送与服务
     - DOMAIN-KEYWORD,mtalk.google,real-ip
-  respect-rules: true
+    - DOMAIN-SUFFIX,googleapis.cn,fake-ip
+    - DOMAIN-SUFFIX,xiaomi.net,real-ip
+    - DOMAIN-SUFFIX,xiaomi.com,real-ip
+    - DOMAIN-SUFFIX,miui.com,real-ip
+
+    # 6. 基于规则集的直连域名过滤
+    - RULE-SET,cn_domain,real-ip
+    - RULE-SET,Fake-IP-Filter,real-ip
+
+    # 7. 兜底策略: 其余所有海外与代理流量统一走 Fake-IP
+    - MATCH,fake-ip
+
+  respect-rules: false
+
+  # 基础引导解析 DNS (纯国内权威 DNS)
   default-nameserver:
+    - 119.28.28.28
+    - 119.29.29.29
     - 223.5.5.5
-    - 1.12.12.12
+    - 223.6.6.6
+
+  # 国内直连解析 DNS (主流国内 DoH)
   direct-nameserver:
     - https://dns.alidns.com/dns-query
     - https://doh.pub/dns-query
+
+  direct-nameserver-follow-policy: true
+
+  # 代理节点域名专属解析 DNS (直连 IP 解析)
   proxy-server-nameserver:
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
+    - 223.5.5.5
+    - 119.29.29.29
+
+  # 代理节点域名私有策略 DNS
+  proxy-server-nameserver-policy:
+#（机场私有dns）
+
+  # 业务层域名策略解析
   nameserver-policy:
-    "RULE-SET:adblock_domain":
-      - rcode://success
-    "RULE-SET:cn_domain":
+    '': *imm_dns（机场私有dns）
+    '': *shanhai_dns（机场私有dns）
+    "rule-set:cn_domain":
       - https://dns.alidns.com/dns-query
       - https://doh.pub/dns-query
-  nameserver:
-    - https://cloudflare-dns.com/dns-query
-    - https://dns.google/dns-query
 
+  # 全局/海外兜底 DNS (强制经由代理节点查询，防 DNS 投毒与泄漏)
+  nameserver:
+    - "https://1.1.1.1/dns-query#节点选择"
+    - "https://8.8.8.8/dns-query#节点选择"
+
+# ------------------------------------------------------------------------------
+# 8. YAML 模块化复用锚点定义 (_anchors)
+# ------------------------------------------------------------------------------
 _anchors:
   provider_base: &p
     type: http
-    interval: 7200
+    interval: 43200
     health-check:
       enable: true
       url: "https://www.gstatic.com/generate_204"
-      interval: 600
+      interval: 300
+      lazy: true
 
   test_config: &test_config
     url: "https://www.gstatic.com/generate_204"
-    interval: 600
-    lazy: false
+    interval: 300
+    lazy: true
     timeout: 5000
 
   all_providers: &all_providers
+    - 自建
+    - Imm
+    - 山海
+    - Kitty
+    - 良心云
+    - 吹雪云
+
+  backup_providers: &backup_providers
     - 自建
     - 山海
     - Kitty
@@ -169,92 +353,92 @@ _anchors:
 
   country_nodes: &country_nodes
     <<: *url_test_base
-    use: *all_providers
+    use: [Imm]
     tolerance: 50
 
   platform_group: &platform_group
     type: select
     proxies:
-      - DIRECT
       - 节点选择
+      - DIRECT
       - 自动选择
-      - 自建
-      - 山海
-      - Kitty
-      - 良心云
-      - 吹雪云      
+      - Imm
+      - 下载负载均衡
+      - 备用节点
       - 香港节点
       - 台湾节点
       - 美国节点
       - 日本节点
       - 韩国节点
       - 新加坡节点
-    interval: 60
-    lazy: false
-    timeout: 5000
 
   rule_domain_base: &domain
     type: http
     interval: 86400
     behavior: domain
     format: mrs
-  
+
   rule_ip_base: &ip
     type: http
     interval: 86400
     behavior: ipcidr
     format: mrs
 
+# ------------------------------------------------------------------------------
+# 9. 节点订阅提供商集合 (Proxy Providers)
+# ------------------------------------------------------------------------------
+# 提示: 请在此处补充您各机场的 Sub-Store 链接或订阅链接
 proxy-providers:
-  自建:
-    <<: *p
-    url: ""
-    path: ./proxy_provider/自建.yaml
-
-  山海:
-    <<: *p
-    url: ""
-    path: ./proxy_provider/山海.yaml
-
-  Kitty:
-    <<: *p
-    url: ""
-    path: ./proxy_provider/Kitty.yaml
-
-  良心云:
-    <<: *p
-    url: ""
-    path: ./proxy_provider/良心云.yaml
-
-  吹雪云:
-    <<: *p
-    url: "" 
-    path: ./proxy_provider/吹雪云.yaml
 
 
+# ------------------------------------------------------------------------------
+# 10. 策略组编排 (Proxy Groups)
+# ------------------------------------------------------------------------------
 proxy-groups:
+  # 主控出口策略组
   - name: 节点选择
     type: select
     proxies:
+      - 自动选择
       - DIRECT
-      - 自建
-      - 山海
-      - Kitty
-      - 良心云
-      - 吹雪云
-    <<: *test_config
+      - Imm
+      - 备用节点
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/nodeselection.png"
 
+  # 主力机场自动测速优选
   - name: 自动选择
     type: url-test
-    use: *all_providers
+    use: [Imm]
     <<: *test_config
+    tolerance: 50
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/autoselection.png"
 
+  # 备用机场故障转移与测速优选
+  - name: 备用节点
+    type: url-test
+    use: *backup_providers
+    <<: *test_config
+    tolerance: 50
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/32b5f1429b21e39a66335ddc7e49bf47835d52bf/backup-node.svg"
+
+  # 下载负载均衡组
+  - name: 下载负载均衡
+    type: load-balance
+    strategy: round-robin
+    use: *backup_providers
+    <<: *test_config
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/32b5f1429b21e39a66335ddc7e49bf47835d52bf/download-load-balance.svg"
+
+  # ---------------- 独立提供商展示组 ----------------
   - name: 自建
     <<: *airport_group
     use: [自建]
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/TestFlight.png"
+
+  - name: Imm
+    <<: *airport_group
+    use: [Imm]
+    icon: "https://github.com/ligonfei/Ligonfei/blob/main/ImmTelecom.png?raw=true"
 
   - name: 山海
     <<: *airport_group
@@ -276,6 +460,7 @@ proxy-groups:
     use: [吹雪云]
     icon: "https://github.com/ligonfei/Ligonfei/blob/main/%E5%90%B9%E9%9B%AA%E4%BA%91.jpg?raw=true"
 
+  # ---------------- 细分业务分流组 ----------------
   - name: 密码管理器
     <<: *platform_group
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/1password.png"
@@ -316,6 +501,10 @@ proxy-groups:
     <<: *platform_group
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Spotify.png"
 
+  - name: CloudFlare
+    <<: *platform_group
+    icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/refs/heads/main/cloudflare.svg"
+
   - name: 游戏平台
     <<: *platform_group
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Game.png"
@@ -347,54 +536,52 @@ proxy-groups:
     <<: *platform_group
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/fish.png"
 
+  # ---------------- 国家/地区专属筛选组 ----------------
   - name: 台湾节点
     <<: *country_nodes
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Taiwan.png"
-    filter: "(?i)(台湾|TW|Taiwan)"
+    filter: "(?i)(台湾|台灣|(^|[^a-z])(TW|Taiwan)([^a-z]|$))"
 
   - name: 香港节点
     <<: *country_nodes
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Hong_Kong.png"
-    filter: "(?i)(香港|HK|Hong\\s*Kong)"
+    filter: "(?i)(香港|(^|[^a-z])(HK|Hong\\s*Kong)([^a-z]|$))"
 
   - name: 日本节点
     <<: *country_nodes
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Japan.png"
-    filter: "(?i)(日本|JP|Japan)"
+    filter: "(?i)(日本|(^|[^a-z])(JP|Japan)([^a-z]|$))"
 
   - name: 美国节点
     <<: *country_nodes
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/United_States.png"
-    filter: "(?i)(美国|US|USA|United\\s*States)"
+    filter: "(?i)(美国|美國|(^|[^a-z])(US|USA|United\\s*States)([^a-z]|$))"
 
   - name: 新加坡节点
     <<: *country_nodes
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Singapore.png"
-    filter: "(?i)(新加坡|SG|Singapore)"
+    filter: "(?i)(新加坡|(^|[^a-z])(SG|Singapore)([^a-z]|$))"
 
   - name: 韩国节点
     <<: *country_nodes
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Korea.png"
-    filter: "(?i)(韩国|KR|Korea|South\\s*Korea)"
+    filter: "(?i)(韩国|韓國|(^|[^a-z])(KR|Korea|South\\s*Korea)([^a-z]|$))"
 
+  # ---------------- 安全与全局兜底策略 ----------------
   - name: 广告拦截
     type: select
     proxies: [REJECT, DIRECT]
     icon: "https://raw.githubusercontent.com/xiao4350/mihomo/main/icon3/AdBlock.png"
 
-  - name: WebRTC
-    type: select
-    proxies: [REJECT, DIRECT]
-    icon: "https://raw.githubusercontent.com/xiao4350/mihomo/refs/heads/main/icon3/WebRTC.png"  
-
   - name: GLOBAL
     type: select
     proxies:
-      - DIRECT
-      - REJECT
       - 节点选择
       - 自动选择
+      - 备用节点
+      - 下载负载均衡
       - 自建
+      - Imm
       - 山海
       - Kitty
       - 良心云
@@ -409,6 +596,7 @@ proxy-groups:
       - Disney+
       - NETFLIX
       - Spotify
+      - CloudFlare
       - 游戏平台
       - GitHub
       - Microsoft
@@ -416,17 +604,21 @@ proxy-groups:
       - Apple
       - 国内平台
       - 漏网之鱼
-      - 香港节点
       - 台湾节点
-      - 美国节点
+      - 香港节点
       - 日本节点
-      - 韩国节点
+      - 美国节点
       - 新加坡节点
+      - 韩国节点
+      - 广告拦截
     interval: 60
     lazy: false
     timeout: 5000
     icon: "https://raw.githubusercontent.com/ligonfei/Ligonfei/main/Global.png"
 
+# ------------------------------------------------------------------------------
+# 11. 远程规则集提供商 (Rule Providers - MRS 二进制格式)
+# ------------------------------------------------------------------------------
 rule-providers:
   Fake-IP-Filter:
     <<: *domain
@@ -491,7 +683,7 @@ rule-providers:
   telegram_ip:
     <<: *ip
     path: ./rules/telegram_ip.mrs
-    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/telegramip.mrs"
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.mrs"
 
   x_domain:
     <<: *domain
@@ -501,32 +693,57 @@ rule-providers:
   youtube_domain:
     <<: *domain
     path: ./rules/youtube.mrs
-    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/youtube.mrs"
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.mrs"
 
   disney_domain:
     <<: *domain
     path: ./rules/disney.mrs
-    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/disney.mrs"
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/disney.mrs"
 
   netflix_domain:
     <<: *domain
     path: ./rules/netflix.mrs
-    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/netflix.mrs"
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/netflix.mrs"
 
   netflix_ip:
     <<: *ip
     path: ./rules/netflix_ip.mrs
-    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/netflixip.mrs"
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/netflix.mrs"
 
   spotify_domain:
     <<: *domain
     path: ./rules/spotify.mrs
-    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/spotify.mrs"
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/spotify.mrs"
 
-  games_domain:
+  cloudflare_domain:
     <<: *domain
-    path: ./rules/games.mrs
-    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/games.mrs"
+    path: ./rules/cloudflare.mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/cloudflare.mrs"
+
+  cloudflare_ip:
+    <<: *ip
+    path: ./rules/cloudflare_ip.mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/cloudflare.mrs"
+
+  steam_domain:
+    <<: *domain
+    path: ./rules/steam.mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/steam.mrs"
+
+  rockstar_domain:
+    <<: *domain
+    path: ./rules/rockstar.mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/rockstar.mrs"
+
+  epicgames_domain:
+    <<: *domain
+    path: ./rules/epicgames.mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/epicgames.mrs"
+
+  ubisoft_domain:
+    <<: *domain
+    path: ./rules/ubisoft.mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ubisoft.mrs"
 
   github_domain:
     <<: *domain
@@ -537,6 +754,11 @@ rule-providers:
     <<: *domain
     path: ./rules/microsoft.mrs
     url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/microsoft.mrs"
+
+  bing_domain:
+    <<: *domain
+    path: ./rules/bing.mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bing.mrs"
 
   google_domain:
     <<: *domain
@@ -556,86 +778,99 @@ rule-providers:
   gfw_domain:
     <<: *domain
     path: ./rules/gfw.mrs
-    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/gfw.mrs"
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/gfw.mrs"
 
   cn_domain:
     <<: *domain
     path: ./rules/cn.mrs
-    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/cn.mrs"
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/cn.mrs"
 
   cn_ip:
     <<: *ip
     path: ./rules/cn_ip.mrs
-    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/cnip.mrs"
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/cn.mrs"
 
   adblock_domain:
     <<: *domain
     path: ./rules/adblock.mrs
     url: "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockmihomo.mrs"
 
-  webrtc_domain:
-    <<: *domain
-    path: ./rules/webrtc.mrs
-    url: "https://github.com/musiyun124/mihomo/raw/refs/heads/main/rules/WebRTC.mrs"
-
-  GameDownload_domain:
-    <<: *domain
-    path: ./rules/category-game-platforms-download.mrs
-    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-game-platforms-download.mrs"
-
-
-
+# ------------------------------------------------------------------------------
+# 12. 路由分流规则 (Routing Rules)
+# ------------------------------------------------------------------------------
 rules:
-  - DOMAIN-SUFFIX,ligon.top,自动选择
-  - DOMAIN-SUFFIX,hybgzs.com,DIRECT
+  # ---------------- 0. PC 端进程级分流 (最高优先级) ----------------
+  # 下载工具强制直连 (防止 BT/迅雷/网盘跑满代理流量或导致机场封号)
+  - PROCESS-NAME,qbittorrent.exe,DIRECT
+  - PROCESS-NAME,Transmission.exe,DIRECT
+  - PROCESS-NAME,Thunder.exe,DIRECT
+  - PROCESS-NAME,BaiduNetdisk.exe,DIRECT
+  - PROCESS-NAME,IDMan.exe,DIRECT
+  # 常用协同/会议工具强制直连 (低延迟)
+  - PROCESS-NAME,WeChat.exe,DIRECT
+  - PROCESS-NAME,TencentMeeting.exe,DIRECT
+  - PROCESS-NAME,DingTalk.exe,DIRECT
+  - PROCESS-NAME,AliyunDrive.exe,DIRECT
+  # 常用代理软件桌面进程精准定向
+  - PROCESS-NAME,Telegram.exe,Telegram
 
-
-  - RULE-SET,webrtc_domain,WebRTC
-  - RULE-SET,adblock_domain,广告拦截
-  - DOMAIN,browserleaks.com,漏网之鱼
-  
-  - DOMAIN-KEYWORD,steamcontent,DIRECT
-  - DOMAIN-KEYWORD,origin-a,DIRECT
-  - RULE-SET,GameDownload_domain,DIRECT
-
-
-  - RULE-SET,password_manager_domain,密码管理器
+  # ---------------- 1. 私有网络与局域网直连 ----------------
   - RULE-SET,private_domain,DIRECT
   - RULE-SET,private_ip,DIRECT,no-resolve
 
+  # ---------------- 2. NTP 时间授时协议端口直连 ----------------
+  - DST-PORT,123,DIRECT
+
+  # ---------------- 3. 自定义域名专属出口 ----------------
+  - DOMAIN-SUFFIX,ligon.top,Imm
+
+  # ---------------- 4. 广告拦截与网络测速 ----------------
+  - RULE-SET,adblock_domain,广告拦截
+  - RULE-SET,speedtest_domain,Speedtest
+
+  # ---------------- 5. 高安全性业务 ----------------
+  - RULE-SET,password_manager_domain,密码管理器
   - RULE-SET,binance_domain,交易所
   - RULE-SET,OKX_domain,交易所
   - RULE-SET,bybit_domain,交易所
   - RULE-SET,gate_domain,交易所
 
+  # ---------------- 6. 人工智能服务 ----------------
   - RULE-SET,ai_domain,AI
   - RULE-SET,ai_ip,AI,no-resolve
 
-  - RULE-SET,speedtest_domain,Speedtest
-
+  # ---------------- 7. 社交通讯平台 ----------------
   - RULE-SET,telegram_domain,Telegram
   - RULE-SET,telegram_ip,Telegram,no-resolve
-
   - RULE-SET,x_domain,推特
 
+  # ---------------- 8. 国际主流流媒体 ----------------
   - RULE-SET,youtube_domain,YouTube
   - RULE-SET,disney_domain,Disney+
   - RULE-SET,netflix_domain,NETFLIX
   - RULE-SET,netflix_ip,NETFLIX,no-resolve
   - RULE-SET,spotify_domain,Spotify
 
-  - RULE-SET,games_domain,游戏平台
-
+  # ---------------- 9. 开发者与操作系统平台服务 ----------------
   - RULE-SET,github_domain,GitHub
+  - RULE-SET,bing_domain,Microsoft
   - RULE-SET,microsoft_domain,Microsoft
-
   - RULE-SET,google_domain,Google
   - RULE-SET,google_ip,Google,no-resolve
-
   - RULE-SET,apple_domain,Apple
+  - RULE-SET,cloudflare_domain,CloudFlare
+  - RULE-SET,cloudflare_ip,CloudFlare,no-resolve
 
+  # ---------------- 10. 全球数字游戏分发平台 ----------------
+  - RULE-SET,steam_domain,游戏平台
+  - RULE-SET,rockstar_domain,游戏平台
+  - RULE-SET,epicgames_domain,游戏平台
+  - RULE-SET,ubisoft_domain,游戏平台
+
+  # ---------------- 11. GFW 列表与国内平台 ----------------
   - RULE-SET,gfw_domain,节点选择
   - RULE-SET,cn_domain,国内平台
   - RULE-SET,cn_ip,国内平台,no-resolve
 
+  # ---------------- 12. 终极漏网之鱼 ----------------
   - MATCH,漏网之鱼
