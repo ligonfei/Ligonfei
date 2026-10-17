@@ -101,8 +101,7 @@ hosts:
   dns.google: 8.8.8.8
 
   # 机场专有节点别名映射
-  666b970d-ef5e-4272-ac42-3a947b8fedca.qq9doijb69.sbs: 2c692199-56c8-4bea-9574-551d497f7338.qq9doijb69.sbs
-  195427a3-0136-410a-bbca-025216d7dd49.ciprmks0f3.sbs: 96c39f9d-c918-4035-a916-d8875ecef22f.ciprmks0f3.sbs
+
 
 # ------------------------------------------------------------------------------
 # 4. 状态持久化配置 (Profile & Cache Storage)
